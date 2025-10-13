@@ -15,13 +15,15 @@ Look at the contents of the `~/.ssh` directory:
 ## QUESTION A
 
 What are the permissions of the `~/.ssh` directory?
+the directory has teh permissions drwx for owner, group and other doesnt have any permissions. 
 
 Why are the permissions set in such a way?
+I think for security reasons. This directory contains the key/keys for ssh so if other could see or write would they maybe be able to log in as me or the owner. 
 
 ## QUESTION B
 
 What does the file `~/.ssh/authorized_keys` contain?
-
+Authorized_keys contains the ssh public keys of authorized users that does not need the password to log in.
 ## QUESTION C
 
 When logged into one of the VMs, how can you connect to the
