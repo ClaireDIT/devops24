@@ -138,11 +138,6 @@ playbook `03-uninstall-software.yml`.
 
 What happens when you run `ansible-playbook` with different options?
 
-Explain what each of these options do:
-* --verbose, -vv, -vvv, -vvvv
-* --check
-* --syntax-check
-
 ## Study Material & Documentation
 
 * https://docs.ansible.com/ansible/latest/playbook_guide/playbooks.html#working-with-playbooks
