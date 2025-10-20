@@ -55,7 +55,7 @@ How can we make the web server start with an addition of just one line to the pl
 
 # QUESTION B
 
-You make have noted that the `become: true` statement has moved from a specific task to the beginning
+You may have noted that the `become: true` statement has moved from a specific task to the beginning
 of the playbook, and is on the same indentation level as `tasks:`.
 
 What does this accomplish?
