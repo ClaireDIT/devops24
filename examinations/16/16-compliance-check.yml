@@ -10,6 +10,7 @@
       - ypbind
       - telnet
       - tftp
+
     forbidden_services:
       - avahi-daemon.service
       - dhcp.service
@@ -24,21 +25,19 @@
     - name: Gather services
       ansible.builtin.service_facts:
 
-    - name: Ensure packages are not installed
+    - name: Ensure forbidden packages are not installed
       ansible.builtin.assert:
         success_msg: "{{ item }} is not installed"
         fail_msg: "{{ item }} is installed"
         that:
-          - "'{{ item }}' not in ansible_facts.packages"
-      loop:
-        "{{ forbidden_packages }}"
+          - item not in ansible_facts.packages
+      loop: {{ forbidden_packages }}
 
-    - name: Ensure services are disabled
+    - name: Ensure forbidden services are disabled
       ansible.builtin.assert:
         success_msg: "{{ item }} is disabled"
         fail_msg: "{{ item }} is enabled"
         that:
-          - "'{{ item }}' not in ansible_facts.services or ansible_facts.services['{{ item }}'].state != 'running'"
-          - "'{{ item }}' not in ansible_facts.services or not ansible_facts.services['{{ item }}'].enabled"
-      loop:
-        "{{ forbidden_services }}"
+          -  item not in ansible_facts.services or ansible_facts.services[ item ].state != 'running'"
+          - item not in ansible_facts.services or not ansible_facts.services[ item ].enabled
+      loop: {{ forbidden_services }}
