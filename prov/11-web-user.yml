@@ -1,0 +1,51 @@
+---
+- name: Create users and assign groups on webservers
+  hosts: web
+  become: true
+
+  vars:
+
+    common_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          37333661646536663039333563386238643632336664343230386466633339396261353533396133
+          6161323033323363306635343538353963393962343038350a643863363635633934323035656330
+          31353962363462343265643365346336353137613937346664343533653864336139656363666131
+          6161346330666665300a303135653630313163303131663330303537623433393762346232393561
+          3939
+
+    users:
+      - name: alovelace
+        comment: "Ada Lovelace"
+        password: "{{ common_password }}"
+        groups: ["wheel", "audio", "video"]
+
+      - name: aturing
+        comment: "Alan Turing"
+        password: "{{ common_password }}"
+        groups: ["tape"]
+
+      - name: edijkstra
+        comment: "Edsger w. Dijkstra"
+        password: "{{ common_password }}"
+        groups: ["tcpdump"]
+
+      - name: ghopper
+        comment: "Grace Hopper"
+        password: "{{ common_password }}"
+        groups: ["wheel", "audio"]
+
+  tasks:
+    - name: Ensure user accounts exist
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        comment: "{{ item.comment }}"
+        password: "{{ item.password }}"
+        state: present
+      loop: "{{ users }}"
+
+    - name: Ensure users are added to their respective groups
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        groups: "{{ item.groups }}"
+        append: true
+      loop: "{{ users }}"

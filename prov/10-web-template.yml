@@ -1,0 +1,45 @@
+---
+- name: Configure HTTPS on webserver
+  hosts: web
+  become: true
+  tasks:
+    - name: Copy HTTPS configuration file
+      ansible.builtin.copy:
+        src: https.conf
+        dest: /etc/nginx/conf.d/https.conf
+        owner: root
+        group: root
+        mode: '0644'
+      register: http_configurationfil
+
+    - name: Create a directory structure
+      ansible.builtin.file:
+        path: /var/www/example.internal/html
+        state: directory
+        mode: '0755'
+        seuser: system_u
+        setype: httpd_sys_content_t
+
+    - name: Copy HTTPS index file to the new directory
+      ansible.builtin.copy:
+        src: files/index.html
+        dest: /var/www/example.internal/html/index.html
+        owner: root
+        group: root
+        mode: '0644'
+        seuser: system_u
+        setype: httpd_sys_content_t
+      register: copyindex_fil
+
+    - name: Ensure the nginx configuration is updated for example.internal
+      ansible.builtin.template:
+        src: templates/example.internal.conf.j2
+        dest: /etc/nginx/conf.d/example.internal.conf
+      register: nginx_configuration
+
+    - name: Restart nginx to apply new configuration
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+      when: copyindex_fil.changed or nginx_configuration.changed or http_configurationfil.changed
+

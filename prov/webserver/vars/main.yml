@@ -1,0 +1,17 @@
+---
+users:
+  - name: alovelace
+    comment: "Ada Lovelace"
+    groups: ["wheel", "audio", "video"]
+
+  - name: aturing
+    comment: "Alan Turing"
+    groups: ["tape"]
+
+  - name: edijkstra
+    comment: "Edsger w. Dijkstra"
+    groups: ["tcpdump"]
+
+  - name: ghopper
+    comment: "Grace Hopper"
+    groups: ["wheel", "audio"]
