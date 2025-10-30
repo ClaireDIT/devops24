@@ -4,6 +4,35 @@
     name: nginx
     state: latest
 
+- name: Ensure the /etc/pki/nginx directory exists
+  ansible.builtin.file:
+    path: /etc/pki/nginx
+    state: directory
+    mode: "0755"
+    owner: root
+
+- name: Ensure we have a /etc/pkig/nginx/private directory
+  ansible.builtin.file:
+    path: /etc/pki/nginx/private
+    state: directory
+    mode: "0700"
+    owner: root
+
+- name: Ensure we have necessary software installed
+  ansible.builtin.package:
+    name: python3-cryptography
+    state: present
+
+- name: Ensure we have a private key for our certificate
+  community.crypto.openssl_privatekey:
+    path: /etc/pki/nginx/private/server.key
+
+- name: Create a self-signed certificate
+  community.crypto.x509_certificate:
+    path: /etc/pki/nginx/server.crt
+    privatekey_path: /etc/pki/nginx/private/server.key
+    provider: selfsigned
+
 - name: Ensure nginx is started at boot
   ansible.builtin.service:
     name: nginx
@@ -17,7 +46,7 @@
     owner: root
     group: root
     mode: '0644'
-#  notify: Reload nginx
+  notify: Reload nginx
 
 - name: Create a directory structure
   ansible.builtin.file:
@@ -36,14 +65,14 @@
     mode: '0644'
     seuser: system_u
     setype: httpd_sys_content_t
-#  notify: Reload nginx
+  notify: Reload nginx
 
 
 - name: Ensure the nginx configuration is updated for example.internal
   ansible.builtin.template:
     src: example.internal.conf.j2
     dest: /etc/nginx/conf.d/example.internal.conf
-#  notify: Reload nginx
+  notify: Reload nginx
 
 
 #- name: Restart nginx to apply new configuration
